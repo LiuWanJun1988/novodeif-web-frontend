@@ -1,0 +1,11 @@
+html {
+  font-size: 16px;
+}
+
+body {
+  min-width: 320px;
+  color: var(--text);
+  font-size: 1rem;
+  font-family: $font-primary, sans-serif;
+  background: var(--background);
+}

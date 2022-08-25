@@ -1,0 +1,14 @@
+$font-primary: 'Spartan MB';
+$fonts: $font-primary 100 normal 'SpartanMB-Thin',
+  $font-primary 200 normal 'SpartanMB-ExtraLight',
+  $font-primary 300 normal 'SpartanMB-Light',
+  $font-primary 400 normal 'SpartanMB-Regular',
+  $font-primary 500 normal 'SpartanMB-Medium',
+  $font-primary 600 normal 'SpartanMB-SemiBold',
+  $font-primary 700 normal 'SpartanMB-Bold',
+  $font-primary 800 normal 'SpartanMB-ExtraBold',
+  $font-primary 900 normal 'SpartanMB-Black';
+
+@each $family, $weight, $style, $file-name in $fonts {
+  @include font-face($family, $weight, $style, $file-name);
+}

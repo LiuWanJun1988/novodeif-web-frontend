@@ -1,0 +1,3 @@
+@function percentage-of($source, $target) {
+  @return math.percentage(math.div($source, $target));
+}

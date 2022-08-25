@@ -1,0 +1,192 @@
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  vertical-align: baseline;
+  border: 0;
+}
+
+html {
+  text-size-adjust: 100%;
+}
+
+img,
+fieldset,
+a img {
+  border: none;
+}
+
+input[type='text'],
+input[type='email'],
+input[type='tel'],
+input[type='password'],
+textarea,
+select {
+  appearance: none;
+}
+
+input[type='submit'],
+button {
+  cursor: pointer;
+}
+
+textarea {
+  overflow: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  border: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+div,
+input,
+textarea,
+select,
+button,
+label,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+a,
+span,
+a:focus {
+  outline: none;
+}
+
+ul,
+ol,
+li {
+  list-style-type: none;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+input[type='submit']::-moz-focus-inner,
+button::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+a:not([class]) {
+  transition: color 0.25s;
+}
+
+html,
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}

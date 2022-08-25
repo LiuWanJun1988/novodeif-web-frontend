@@ -1,0 +1,193 @@
+body {
+  --white: #fff;
+  --white-rgb: 255 255 255;
+  --black: #000;
+  --black-rgb: 0 0 0;
+  --blue: #3467ff;
+  --success: #48b881;
+  --danger: #d0021b;
+  --theme-button-color: #deccef;
+  --sidebar-link-color: #c1c5d7;
+  --sidebar-link-color-active: #deccef;
+
+  &.is-light {
+    --text: #0f1840;
+    --background: #fff;
+    --loading-icon-color: #130523;
+    --sidebar-background: #130523;
+    --sidebar-link-background-active: #1c0a30;
+    --header-background: #fafbff;
+    --header-border: #e7eaec;
+    --header-accounts-color: #23262f;
+    --header-accounts-border: #e6e8ec;
+    --header-accounts-background: transparent;
+    --header-accounts-avatar-primary: #4a4a4a;
+    --header-accounts-avatar-secondary: #2385e1;
+    --header-accounts-avatar-tertiary: #f91601;
+    --theme-button-background: #130523;
+    --button-stroke-border: rgb(72 79 103 / 0.7);
+    --button-stroke-color: rgb(72 79 103 / 0.7);
+    --button-default-color: #0f1840;
+    --button-default-background: #e7eaec;
+    --button-tertiary-color: #2a2f46;
+    --button-tertiary-background: #d6dcf3;
+    --connect-wallet-card-border: #f3f4f5;
+    --connect-wallet-card-background: #fff;
+    --connect-wallet-card-text: #484f67;
+    --connect-wallet-card-figure-border: transparent;
+    --connect-wallet-card-figure-background: #f5fbf8;
+    --connect-wallet-card-figure-color: var(--success);
+    --tabs-color: #6a708c;
+    --tabs-border: #1c0a30;
+    --label-color: var(--success);
+    --label-icon: #130523;
+    --staking-figure-list: #f2f2f2;
+    --info-box-background: #fafbff;
+    --info-box-border: #e6e8f0;
+    --info-section-icon: #86719a;
+    --info-section-icon2: #fcc050;
+    --info-section-value: #0f1840;
+    --info-section-title: #484f67;
+    --info-section-text: rgb(72 79 103 / 0.7);
+    --info-section-line: radial-gradient(
+      circle at 50% 0%,
+      #edeff5 0%,
+      rgb(237 239 245 / 0) 49%
+    );
+    --balance-border: #e6e8f0;
+    --balance-background: transparent;
+    --balance-status-text: #7e8394;
+    --balance-icon: #86719a;
+    --balance-line: radial-gradient(
+      circle at 50% 0%,
+      #edeff5 0%,
+      rgb(237 239 245 / 0) 49%
+    );
+    --balance-total: rgb(72 79 103 / 0.7);
+    --balance-max-color: rgb(72 79 103 / 0.7);
+    --balance-max-background: #fafbff;
+    --balance-max-border: #edeff5;
+    --balance-input-color: #2a2f45;
+    --balance-label: #484f67;
+    --balance-close: #495068;
+    --stats-label: #717792;
+    --stats-result: #474e66;
+    --stats-line: radial-gradient(
+      circle at 50% 0%,
+      #edeff5 0%,
+      rgb(237 239 245 / 0) 49%
+    );
+    --chart-background: #fafbff;
+    --chart-border: #e6e8f0;
+    --chart-label: #474e66;
+    --card-border: #e6e8f0;
+    --card-label: #484f67;
+    --card-description: rgb(72 79 103 / 0.7);
+    --card-line: radial-gradient(
+      circle at 50% 0%,
+      #edeff5 0%,
+      rgb(237 239 245 / 0) 49%
+    );
+    --follow-background: linear-gradient(86deg, #f5f5fd 0%, #f9fdfe 100%);
+    --follow-text: #6a708c;
+    --profile-text: #6a708c;
+    --transactions-header-background: #f9fafc;
+    --transactions-border: #e6e8f0;
+    --transactions-color: #6a708c;
+    --account-menu-background: #f9fafc;
+    --account-menu-border: #e6e8f0;
+    --account-menu-line: #e6e8f0;
+    --account-menu-shadow: 106 112 140;
+    --account-menu-meta-color: #555e89;
+    --unstake-details-grid-rgb: 42 47 70;
+    --modal-header: #e6e8f0;
+    --modal-background: #f9fafc;
+    --modal-shadow: 106 112 140;
+  }
+
+  &.is-dark {
+    --text: #fff;
+    --background: #130523;
+    --loading-icon-color: #fff;
+    --sidebar-background: rgb(28 9 50 / 0.5);
+    --sidebar-link-background-active: #321f44;
+    --header-background: #130523;
+    --header-border: rgb(51 61 106 / 0.3);
+    --header-accounts-color: #fff;
+    --header-accounts-border: #1c1538;
+    --header-accounts-background: #18082b;
+    --header-accounts-avatar-primary: #23262f;
+    --header-accounts-avatar-secondary: #86719a;
+    --header-accounts-avatar-tertiary: #deccef;
+    --theme-button-background: #1c0a30;
+    --button-stroke-border: rgb(255 255 255 / 0.7);
+    --button-stroke-color: #fff;
+    --button-default-color: #deccef;
+    --button-default-background: rgb(44 23 70 / 0.8);
+    --button-tertiary-color: #2a2f46;
+    --button-tertiary-background: #d6dcf3;
+    --connect-wallet-card-border: rgb(51 61 106 / 0.3);
+    --connect-wallet-card-background: #1c0a30;
+    --connect-wallet-card-text: #ebebeb;
+    --connect-wallet-card-figure-border: #deccef;
+    --connect-wallet-card-figure-background: transparent;
+    --connect-wallet-card-figure-color: var(--connect-wallet-figure-border);
+    --tabs-color: #cfbfdf;
+    --tabs-border: #deccef;
+    --label-color: var(--success);
+    --label-icon: var(--success);
+    --staking-figure-list: #351955;
+    --info-box-background: transparent;
+    --info-box-border: #221841;
+    --info-section-icon: #deccef;
+    --info-section-icon2: #fee6b9;
+    --info-section-value: #fff;
+    --info-section-title: #cfbfdf;
+    --info-section-text: rgb(255 255 255 / 0.66);
+    --info-section-line: radial-gradient(
+      circle at 50% 0%,
+      #413053 0%,
+      #130523 49%
+    );
+    --balance-border: transparent;
+    --balance-background: #18082b;
+    --balance-status-text: #fff;
+    --balance-icon: #deccef;
+    --balance-line: radial-gradient(circle at 50% 0%, #413053 0%, #130523 49%);
+    --balance-total: #deccef;
+    --balance-max-color: #18082b;
+    --balance-max-background: #deccef;
+    --balance-max-border: #deccef;
+    --balance-input-color: #fff;
+    --balance-label: #deccef;
+    --balance-close: #deccef;
+    --stats-label: #deccef;
+    --stats-result: #deccef;
+    --stats-line: radial-gradient(circle at 50% 0%, #413053 0%, #130523 49%);
+    --chart-background: #18082b;
+    --chart-border: #18082b;
+    --chart-label: #deccef;
+    --card-border: #221841;
+    --card-label: #cfbfdf;
+    --card-description: rgb(255 255 255 / 0.66);
+    --card-line: radial-gradient(circle at 50% 0%, #413053 0%, #130523 49%);
+    --follow-background: linear-gradient(86deg, #1c0a30 0%, #17072a 100%);
+    --follow-text: #deccef;
+    --profile-text: #deccef;
+    --transactions-header-background: #1c0a30;
+    --transactions-border: #221841;
+    --transactions-color: #deccef;
+    --account-menu-background: #170829;
+    --account-menu-border: #1a0e32;
+    --account-menu-line: #221841;
+    --account-menu-shadow: 0 0 0;
+    --account-menu-meta-color: #baabc8;
+    --unstake-details-grid-rgb: 222 204 239;
+    --modal-header: #1c0a30;
+    --modal-background: #170829;
+    --modal-shadow: 0 0 0;
+    @include media($to: md) {
+      --sidebar-background: rgb(28 9 50);
+    }
+  }
+}

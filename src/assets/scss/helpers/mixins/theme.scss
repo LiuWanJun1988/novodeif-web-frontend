@@ -1,0 +1,11 @@
+@mixin is-dark {
+  body[class*='is-dark'] & {
+    @content;
+  }
+}
+
+@mixin is-light {
+  body[class*='is-light'] & {
+    @content;
+  }
+}

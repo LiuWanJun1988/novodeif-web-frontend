@@ -1,0 +1,46 @@
+<template>
+  <svg viewBox="0 0 24 24" fill="none">
+    <line
+      x1="14.9902344"
+      y1="12"
+      x2="16.0002346"
+      y2="12"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-dasharray="0,0"
+    />
+    <line
+      x1="8"
+      y1="12"
+      x2="11.8100004"
+      y2="12"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-dasharray="0,0"
+    />
+    <line
+      x1="12"
+      y1="16"
+      x2="12"
+      y2="8"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-dasharray="0,0"
+    />
+    <path
+      d="M2,13.04 L2,15 C2,20 4,22 9,22 L15,22 C20,22 22,20 22,15 L22,9 C22,4 20,2 15,2 L9,2 C4,2 2,4 2,9"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-dasharray="0,0"
+      fill-rule="nonzero"
+    />
+  </svg>
+</template>

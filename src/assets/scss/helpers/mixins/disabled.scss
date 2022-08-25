@@ -1,0 +1,12 @@
+@mixin disabled($is-disabled: true) {
+  @if $is-disabled {
+    &:disabled,
+    &[disabled] {
+      @content;
+    }
+  } @else {
+    &:not(:disabled):not([disabled]) {
+      @content;
+    }
+  }
+}

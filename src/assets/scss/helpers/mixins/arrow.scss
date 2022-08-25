@@ -1,0 +1,38 @@
+@mixin arrow($width, $height, $bg, $direction) {
+  width: 0;
+  height: 0;
+  border-style: solid;
+
+  @if $direction == t {
+    border-color: transparent transparent $bg transparent;
+    border-width: 0 math.div($width, 2) $height math.div($width, 2);
+  }
+  @if $direction == r {
+    border-color: transparent transparent transparent $bg;
+    border-width: math.div($height, 2) 0 math.div($height, 2) $width;
+  }
+  @if $direction == b {
+    border-color: $bg transparent transparent transparent;
+    border-width: $height math.div($width, 2) 0 math.div($width, 2);
+  }
+  @if $direction == l {
+    border-color: transparent $bg transparent transparent;
+    border-width: math.div($height, 2) $width math.div($height, 2) 0;
+  }
+  @if $direction == tl {
+    border-color: $bg transparent transparent transparent;
+    border-width: $height $width 0 0;
+  }
+  @if $direction == tr {
+    border-color: transparent $bg transparent transparent;
+    border-width: 0 $width $height 0;
+  }
+  @if $direction == br {
+    border-color: transparent transparent $bg transparent;
+    border-width: 0 0 $height $width;
+  }
+  @if $direction == bl {
+    border-color: transparent transparent transparent $bg;
+    border-width: $width 0 0 $height;
+  }
+}

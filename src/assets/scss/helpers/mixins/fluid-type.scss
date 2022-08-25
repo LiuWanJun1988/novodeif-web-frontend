@@ -1,0 +1,33 @@
+@function strip-unit($value) {
+  @return $value / ($value * 0 + 1);
+}
+
+@mixin fluid-type(
+  $min-width,
+  $max-width,
+  $min-value,
+  $max-value,
+  $property: font-size
+) {
+  $u1: math.unit($min-width);
+  $u2: math.unit($max-width);
+  $u3: math.unit($min-value);
+  $u4: math.unit($max-value);
+
+  @if $u1 == $u2 and $u1 == $u3 and $u1 == $u4 {
+    & {
+      #{$property}: $min-value;
+
+      @media screen and (min-width: $min-width) {
+        $a: #{$min-value} + #{strip-unit($max-value - $min-value)};
+        $b: ((100vw - #{$min-width}) / #{strip-unit($max-width - $min-width)});
+
+        #{$property}: calc($a * $b);
+      }
+
+      @media screen and (min-width: $max-width) {
+        #{$property}: $max-value;
+      }
+    }
+  }
+}

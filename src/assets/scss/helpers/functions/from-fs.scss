@@ -1,0 +1,3 @@
+@function from-fs($source, $target) {
+  @return math.div($source, $target) * 1em;
+}

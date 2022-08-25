@@ -1,0 +1,71 @@
+$breakpoints: (
+  xxs: 375px,
+  xs: 560px,
+  sm: 768px,
+  md: 1080px,
+  lg: 1280px,
+  xl: 1460px,
+  xxl: 1680px,
+  xxxl: 1920px,
+);
+
+@function has-breakpoint($bp: null) {
+  @return map.has-key($breakpoints, $bp);
+}
+
+@function resolve-breakpoint($bp: null) {
+  @if has-breakpoint($bp) {
+    @return map.get($breakpoints, $bp);
+  }
+
+  @return $bp;
+}
+
+@mixin media($from: null, $to: null) {
+  $from: if(
+    $from,
+    if(has-breakpoint($from), resolve-breakpoint($from) + 1, $from),
+    null
+  );
+  $to: resolve-breakpoint($to);
+
+  @if $from != null and $to != null {
+    @media screen and (min-width: $from) and (max-width: $to) {
+      @content;
+    }
+  } @else if $from != null {
+    @media screen and (min-width: $from) {
+      @content;
+    }
+  } @else if $to != null {
+    @media screen and (max-width: $to) {
+      @content;
+    }
+  }
+}
+
+%example {
+  @include media(xxs, xs) {
+    color: red;
+  }
+
+  @include media(xs, sm) {
+    color: green;
+  }
+
+  @include media(780px, md) {
+    color: orange;
+  }
+
+  @include media(md, 1100px) {
+    color: red;
+  }
+
+  @include media($to: 1200px, $from: 1100px) {
+    color: purple;
+  }
+
+  @include media(null, xl) {
+    color: rebeccapurple;
+  }
+}
