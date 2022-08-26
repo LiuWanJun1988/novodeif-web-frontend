@@ -26,20 +26,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch, ref, computed } from 'vue'
+import { defineComponent, computed } from 'vue'
 import ConnectWalletCard from '~/components/ui/ConnectWalletCard.vue'
 import FollowNovo from '~/components/ui/FollowNovo.vue'
 import { useStore } from '~/store'
 import BaseCard from '~/components/ui/BaseCard.vue'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
+import { convertBnbToUSD, convertToUSD } from '~/helpers/convertToCurrency'
 import {
-  convertBnbToUSD,
-  convertToNovo,
-  convertToUSD,
-} from '~/helpers/convertToCurrency'
-import {
-  stakingContractAddress,
+  ncosContractAddress,
   tokenContractAddress,
+  tokenPairAddress,
   treasuryContractAddress,
 } from '~/constants/addresses'
 
@@ -110,7 +107,7 @@ export default defineComponent({
       {
         id: 7,
         icon: 'icon-discount',
-        value: 'N/A',
+        value: '3%',
         label: 'Staking APY',
         buttonText: 'VIEW BSCSCAN',
         description: 'Current annual Percentage Yield on staking',
@@ -134,20 +131,6 @@ export default defineComponent({
       const { state } = useStore()
       const provider = state.provider.getWeb3ProviderInstance()
       const signer = provider.getSigner()
-      const staking_contract = new ethers.Contract(
-        stakingContractAddress,
-        ['function vaultAvailableBalance() public view returns (uint256)'],
-        signer
-      )
-
-      staking_contract.vaultAvailableBalance().then(async (tvl: any) => {
-        console.log(tvl)
-        this.tokenInformation[3].value = convertToUSD(
-          (tvl / 1e9) *
-            parseFloat(this.tokenInformation[0].value.replace('$', ''))
-        )
-        console.log(this.tokenInformation[3].value)
-      })
 
       const novotoken_contract = new ethers.Contract(
         tokenContractAddress,
@@ -155,19 +138,32 @@ export default defineComponent({
         signer
       )
 
+      const ncos_contract = new ethers.Contract(
+        ncosContractAddress,
+        ['function totalSupply() public view returns (uint256)'],
+        signer
+      )
+
+      novotoken_contract
+        .balanceOf(ncosContractAddress)
+        .then(async (tvl: BigNumber) => {
+          this.tokenInformation[3].value = convertToUSD(
+            tvl.div(BigNumber.from(1e9)).toNumber() *
+              parseFloat(this.tokenInformation[0].value.replace('$', ''))
+          )
+        })
+
       novotoken_contract
         .balanceOf(treasuryContractAddress)
-        .then(async (novoBalance: any) => {
-          console.log(novoBalance / 1e9)
+        .then(async (novoBalance: number) => {
           let novoBalanceWithUSD =
             (novoBalance / 1e9) *
             parseFloat(this.tokenInformation[0].value.replace('$', ''))
 
           provider
             .getBalance(treasuryContractAddress)
-            .then((balanceWallet: any) => {
+            .then((balanceWallet: BigNumber) => {
               convertBnbToUSD((balanceWallet as any) / 1e18).then((res) => {
-                console.log(res)
                 novoBalanceWithUSD += res
                 this.tokenInformation[2].value =
                   convertToUSD(novoBalanceWithUSD)
@@ -175,16 +171,18 @@ export default defineComponent({
             })
             .catch((error) => console.log(error))
         })
+
+      ncos_contract.totalSupply().then((totalSupply: any) => {
+        this.tokenInformation[7].value = totalSupply
+      })
     },
   },
   created() {
     fetch(
-      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=novo-token&order=market_cap_desc&per_page=100&page=1&sparkline=false'
+      'https://api.dexscreener.com/latest/dex/pairs/bsc/' + tokenPairAddress
     )
       .then(async (response) => {
         const data = await response.json()
-
-        // console.log(data)
 
         // check for error response
         if (!response.ok) {
@@ -193,20 +191,17 @@ export default defineComponent({
           return Promise.reject(error)
         }
 
-        Promise.all(
-          data.map((item: { [x: string]: string }) => {
-            this.tokenInformation[0].value = '$' + item['current_price']
-            this.tokenInformation[1].value = convertToUSD(
-              984112880.53 * (item['current_price'] as any)
-            )
-            this.tokenInformation[4].value = convertToUSD(
-              parseInt(item['total_volume']) * 0.03
-            )
-            this.tokenInformation[5].value = convertToUSD(
-              item['total_volume'] as any
-            )
-          })
+        this.tokenInformation[0].value = '$' + data.pair.priceUsd
+        this.tokenInformation[1].value = convertToUSD(
+          984112880.53 * (data.pair.priceUsd as number)
         )
+        this.tokenInformation[4].value = convertToUSD(
+          parseInt(data.pair.volume.h24) * 0.03
+        )
+        this.tokenInformation[5].value = convertToUSD(
+          data.pair.volume.h24 as number
+        )
+
         this.getInformationByWeb3()
       })
       .catch((error) => {

@@ -26,37 +26,6 @@ import TheTransactions from '~/components/common/TheTransactions.vue'
 export default defineComponent({
   name: 'PortfolioPage',
   components: { TheStats, FollowNovo, TheTransactions },
-  setup() {
-    const rows = Array(10)
-      .fill({
-        icon: '',
-        type: '',
-        bnb: '',
-        novo: '',
-        return: '',
-        amount: '',
-        isSwap: false,
-      })
-      .map((_, i) => {
-        const types = ['Swap', 'Stake']
-        const icons = ['icon-shield', 'icon-swap']
-        const type = Math.round(Math.random())
-        return {
-          id: i,
-          isSwap: !!type,
-          type: types[type],
-          icon: icons[type],
-          bnb: '1.5 BNB',
-          novo: '4,195,312 NOVO',
-          from: '0x1CAA12DBc2da0c825247dFCCC444b003a89cB4aA',
-          to: '0xE8761A412C826C9B9E00454874dc3558E986aAcD',
-          return: `${(Math.random() * 100).toFixed(2)}%`,
-          amount: '$512 USD',
-        }
-      })
-
-    return { rows }
-  },
 })
 </script>
 

@@ -36,10 +36,10 @@
 <script lang="ts">
 import { ethers } from 'ethers'
 import { computed, defineComponent, onMounted, ref, watch } from 'vue'
-import { convertToNovo, convertToUSD } from '~/helpers/convertToCurrency'
+import { convertToUSD } from '~/helpers/convertToCurrency'
 import {
-  stakingContractAddress,
   tokenContractAddress,
+  tokenPairAddress,
 } from '../../constants/addresses'
 import { useStore } from '../../store'
 
@@ -49,70 +49,31 @@ export default defineComponent({
     totalSupply: 0,
   }),
   created() {
-    const { state, methods } = useStore()
-    const provider = state.provider.getWeb3ProviderInstance()
-    const bscScanUrl =
-      provider.chainId == 56 ? 'api.bscscan.com' : 'api-testnet.bscscan.com'
-    const tokenContract = tokenContractAddress
+    const { methods } = useStore()
+    const bscScanUrl = 'api.bscscan.com'
     const owner = this.getters.selectedAccount.value
-    const stakingContractAddressOnNetwork =
-      provider.chainId == 56 ? null : stakingContractAddress.toLowerCase()
-
-    const getStakeInfo = async (index: number) => {
+    const getStakeInfo = async () => {
       const currentStake = await methods
-        .getStakingContract()
-        .stakeInfo(this.getters.selectedAccount.value, index)
-      const amount = Number(ethers.utils.formatUnits(currentStake.amount, 9))
-      this.totalStaked += amount
-    }
-
-    const getRewardInfo = async (index: number) => {
-      const { reward } = await methods
-        .getStakingContract()
-        .calculateReward(this.getters.selectedAccount.value, index, 0)
-      const amount = Number(ethers.utils.formatUnits(reward, 9))
-      this.totalRewards += amount
-    }
-
-    const stakeCount = async () => {
-      const stakeCountResponse = await methods
-        .getStakingContract()
-        .stakeCount(this.getters.selectedAccount.value)
-      const stakeCount = Number(stakeCountResponse)
-
-      for (let i = 0; i < stakeCount; i++) {
-        getStakeInfo(i)
-      }
-
-      for (let i = 0; i < stakeCount; i++) {
-        getRewardInfo(i)
-      }
-    }
-
-    stakeCount()
-
-    fetch(
-      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=novo-token&order=market_cap_desc&per_page=100&page=1&sparkline=false'
-    )
-      .then(async (response) => {
-        const data = await response.json()
-        if (!response.ok) {
-          const error = (data && data.message) || response.statusText
-          return Promise.reject(error)
-        }
-        Promise.all(
-          data.map((item: { [x: string]: string }) => {
-            this.currentPrice = parseFloat(item['current_price'])
-            this.totalSupply = parseFloat(item['total_supply'])
-          })
+        .getNcosContract()
+        .getStakingStatusByAddress(this.getters.selectedAccount.value)
+      const principalBalance = Number(
+        ethers.utils.formatUnits(currentStake.stakeInfo.principalBalance, 9)
+      )
+      const reward =
+        Number(
+          ethers.utils.formatUnits(currentStake.stakeInfo.bagSizeReward, 9)
+        ) +
+        Number(
+          ethers.utils.formatUnits(currentStake.stakeInfo.stakingTimeReward, 9)
         )
-      })
-      .catch((error) => {
-        console.error('There was an error!', error)
-      })
+      this.totalStaked = principalBalance
+      this.totalRewards = reward
+    }
+
+    getStakeInfo()
 
     fetch(
-      `https://${bscScanUrl}/api?module=account&action=tokentx&contractaddress=${tokenContract}&address=${owner}&page=1&offset=500&startblock=0&endblock=999999999&sort=asc&apikey=7BMPA4TJFJW6G9PBP21H9X2K6I7KBESXZR`
+      'https://api.dexscreener.com/latest/dex/pairs/bsc/' + tokenPairAddress
     )
       .then(async (response) => {
         const data = await response.json()
@@ -120,58 +81,68 @@ export default defineComponent({
           const error = (data && data.message) || response.statusText
           return Promise.reject(error)
         }
-
-        const historicalPricePromises: Record<string, Promise<any>> = {}
-        const firstHistoricalPriceData = new Date(1643324400 * 1000) // 28th of January 2022
-
-        data.result.map((d: any) => {
-          let timestamp = new Date(parseInt(d.timeStamp) * 1000)
-          if (timestamp < firstHistoricalPriceData) {
-            timestamp = firstHistoricalPriceData
-          }
-          d.formattedTimestamp = `${timestamp.getDate()}-${
-            timestamp.getMonth() + 1
-          }-${timestamp.getFullYear()}`
-          if (historicalPricePromises[d.formattedTimestamp] == null) {
-            historicalPricePromises[d.formattedTimestamp] = fetch(
-              `https://api.coingecko.com/api/v3/coins/novo-token/history?date=${d.formattedTimestamp}`
-            )
-              .then(async (response) => {
-                const historicalData = await response.json()
-                if (!response.ok) {
-                  const error =
-                    (historicalData && historicalData.message) ||
-                    response.statusText
-                  return Promise.reject(error)
-                }
-                return historicalData.market_data.current_price.usd
-              })
-              .catch((error) => {
-                console.error('There was an error!', error)
-              })
-          }
-        })
-
-        await Promise.all(Object.values(historicalPricePromises))
-
-        data.result.map(async (d: any) => {
-          if (
-            stakingContractAddressOnNetwork != null &&
-            (d.from == stakingContractAddressOnNetwork ||
-              d.to == stakingContractAddressOnNetwork)
-          ) {
-            return
-          }
-          const fiatValueOfNovoTokens =
-            (d.value / 10 ** d.tokenDecimal) *
-            (await historicalPricePromises[d.formattedTimestamp])
-          this.fiatInvestment +=
-            d.from == owner ? -fiatValueOfNovoTokens : fiatValueOfNovoTokens
-        })
+        this.currentPrice = parseFloat(data.pair.priceUsd)
+        this.totalSupply = 1000000000.0
       })
       .catch((error) => {
         console.error('There was an error!', error)
       })
+
+    this.fiatInvestment = 0.0
+    // fetch(
+    //   `https://${bscScanUrl}/api?module=account&action=tokentx&contractaddress=${tokenContractAddress}&address=${owner}&page=1&offset=500&startblock=0&endblock=999999999&sort=asc&apikey=7BMPA4TJFJW6G9PBP21H9X2K6I7KBESXZR`
+    // )
+    //   .then(async (response) => {
+    //     const data = await response.json()
+    //     if (!response.ok) {
+    //       const error = (data && data.message) || response.statusText
+    //       return Promise.reject(error)
+    //     }
+
+    //     const historicalPricePromises: Record<string, Promise<any>> = {}
+    //     const firstHistoricalPriceData = new Date(1643324400 * 1000) // 28th of January 2022
+
+    //     data.result.map((d: any) => {
+    //       let timestamp = new Date(parseInt(d.timeStamp) * 1000)
+    //       if (timestamp < firstHistoricalPriceData) {
+    //         timestamp = firstHistoricalPriceData
+    //       }
+    //       d.formattedTimestamp = `${timestamp.getDate()}-${
+    //         timestamp.getMonth() + 1
+    //       }-${timestamp.getFullYear()}`
+    //       if (historicalPricePromises[d.formattedTimestamp] == null) {
+    //         historicalPricePromises[d.formattedTimestamp] = fetch(
+    //           `https://api.coingecko.com/api/v3/coins/novo-token/history?date=${d.formattedTimestamp}`
+    //         )
+    //           .then(async (response) => {
+    //             const historicalData = await response.json()
+    //             if (!response.ok) {
+    //               const error =
+    //                 (historicalData && historicalData.message) ||
+    //                 response.statusText
+    //               return Promise.reject(error)
+    //             }
+    //             return historicalData.market_data.current_price.usd
+    //           })
+    //           .catch((error) => {
+    //             console.error('There was an error!', error)
+    //           })
+    //       }
+    //     })
+
+    //     await Promise.all(Object.values(historicalPricePromises))
+
+    //     data.result.map(async (d: any) => {
+    //       const fiatValueOfNovoTokens =
+    //         (d.value / 10 ** d.tokenDecimal) *
+    //         (await historicalPricePromises[d.formattedTimestamp])
+    //       this.fiatInvestment +=
+    //         d.from == owner ? -fiatValueOfNovoTokens : fiatValueOfNovoTokens
+    //     })
+    //   })
+    //   .catch((error) => {
+    //     console.error('There was an error!', error)
+    //   })
   },
   computed: {
     items() {
@@ -231,15 +202,17 @@ export default defineComponent({
     const totalRewards = ref(0)
 
     const portfolioInfo = computed(() => {
+      console.log([
+        getters.selectedBalance.value,
+        totalStaked.value,
+        totalRewards.value,
+        currentPrice.value,
+        fiatInvestment.value,
+      ])
       return {
         totalBalance: [
-          getters.selectedBalance.value +
-            totalStaked.value +
-            totalRewards.value,
-          (getters.selectedBalance.value +
-            totalStaked.value +
-            totalRewards.value) *
-            currentPrice.value,
+          getters.selectedBalance.value,
+          getters.selectedBalance.value * currentPrice.value,
         ],
         currentPrice: currentPrice.value,
         fiatVolume: fiatInvestment.value,
