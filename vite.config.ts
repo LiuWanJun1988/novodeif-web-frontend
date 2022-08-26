@@ -80,6 +80,8 @@ export default defineConfig({
         ),
         buyNovo: path.resolve(__dirname, 'buy-novo/index.html'),
         buyNovoNovoPay: path.resolve(__dirname, 'buy-novo/novo-pay/index.html'),
+        treasury: path.resolve(__dirname, 'treasury/index.html'),
+        stakingv2: path.resolve(__dirname, 'stakingv2/index.html'),
       },
     },
   },

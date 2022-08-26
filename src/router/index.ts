@@ -46,7 +46,7 @@ const router = createRouter({
     },
     {
       name: 'StakingV2',
-      path: '/staking-v2',
+      path: '/stakingv2',
       component: StakingV2Page,
       meta: { title: 'StakingV2' },
     },
