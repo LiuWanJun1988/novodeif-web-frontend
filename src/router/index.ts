@@ -159,7 +159,7 @@ const routeAuthorized = async (
   _from: RouteLocationNormalized,
   next: NavigationGuardNext
 ) => {
-  const { getters, methods } = useStore()
+  const { getters } = useStore()
 
   switch (to.path) {
     case '/staking':

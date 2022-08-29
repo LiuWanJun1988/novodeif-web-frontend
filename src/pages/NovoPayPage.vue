@@ -64,6 +64,11 @@ import EnterBalance from '~/components/ui/EnterBalance.vue'
 import { RampInstantSDK } from '@ramp-network/ramp-instant-sdk'
 import { ethers } from 'ethers'
 import { useStore } from '~/store'
+import {
+  bnbContractAddress,
+  swapContractAddress,
+  tokenContractAddress,
+} from '~/constants/addresses'
 
 export default defineComponent({
   name: 'NovoPayPage',
@@ -78,7 +83,7 @@ export default defineComponent({
       const infuraProvider = new ethers.providers.Web3Provider(provider as any)
       const signer = infuraProvider.getSigner()
       const contract = new ethers.Contract(
-        '0x10ED43C718714eb63d5aA57B78B54704E256024E',
+        swapContractAddress,
         [
           'function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external payable returns (uint[] memory amounts)',
         ],
@@ -106,8 +111,8 @@ export default defineComponent({
             signer.swapExactETHForTokens(
               0,
               [
-                '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', // 0x094616f0bdfb0b526bd735bf66eca0ad254ca81f
-                '0xCb10A6B203120C50Cce48e3E1131aA717A82fb5F', // 0x7C2e03b5BF995bABBd794b1326e663b6f57114ad
+                bnbContractAddress, // 0x094616f0bdfb0b526bd735bf66eca0ad254ca81f
+                tokenContractAddress, // 0x7C2e03b5BF995bABBd794b1326e663b6f57114ad
               ],
               this.getters.selectedAccount.value,
               Math.floor(Date.now() / 1000) + 900,

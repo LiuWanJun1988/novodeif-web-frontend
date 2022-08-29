@@ -53,7 +53,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue'
+import { defineComponent } from 'vue'
 import BaseIcon from '../ui/BaseIcon.vue'
 import { useStore } from '../../store'
 import {
@@ -62,7 +62,7 @@ import {
   tokenContractAddress,
 } from '../../constants/addresses'
 import detectEthereumProvider from '@metamask/detect-provider'
-import { convertToNovo, convertToUSD } from '~/helpers/convertToCurrency'
+import { convertToNovo } from '~/helpers/convertToCurrency'
 
 export default defineComponent({
   name: 'TheTransactions',
@@ -80,7 +80,6 @@ export default defineComponent({
         stakingContractAddress.toLowerCase()
       const swapContractAddressOnNetwork = swapContractAddress.toLowerCase()
 
-      const icons = ['icon-shield', 'icon-swap', 'icon-shield', 'icon-swap', '']
       fetch(
         `https://${bscScanAPIUrl}/api?module=account&action=txlist&address=${owner}&page=1&offset=500&startblock=0&endblock=999999999&sort=desc&apikey=7BMPA4TJFJW6G9PBP21H9X2K6I7KBESXZR`
       ).then(async (response) => {
@@ -89,8 +88,6 @@ export default defineComponent({
           const error = (data && data.message) || response.statusText
           return Promise.reject(error)
         }
-
-        console.log(data)
 
         let type = 'Unknown'
         let icon = ''
@@ -162,12 +159,6 @@ export default defineComponent({
               })
             }
           })
-
-          console.log(
-            this.transaction_items.sort((a, b) =>
-              a.age < b.age ? 1 : b.age < a.age ? -1 : 0
-            )
-          )
         })
       })
     })
@@ -245,7 +236,7 @@ export default defineComponent({
     },
   },
   setup() {
-    const { getters, methods } = useStore()
+    const { getters } = useStore()
 
     const columns = [
       {

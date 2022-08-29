@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, computed } from 'vue'
+import { defineComponent } from 'vue'
 import InfoBox from '~/components/ui/InfoBox.vue'
 import { useStore } from '~/store'
 import { ethers } from 'ethers'
@@ -57,7 +57,6 @@ import { convertToNovo } from '~/helpers/convertToCurrency'
 import CertificateMintSection from '~/components/ui/CertificateMintSection.vue'
 import CertificateStatusSection from '~/components/ui/CertificateStatusSection.vue'
 import TheLoadingScreen from '~/components/common/TheLoadingScreen.vue'
-import { access } from 'fs'
 
 export default defineComponent({
   name: 'StakingStakePage',

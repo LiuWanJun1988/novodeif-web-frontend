@@ -115,7 +115,7 @@ export default defineComponent({
 
   &__title {
     width: 100%;
-    color: rgb(12 12 13);
+    color: var(--text);
     font-weight: 700;
     font-size: 24px;
 

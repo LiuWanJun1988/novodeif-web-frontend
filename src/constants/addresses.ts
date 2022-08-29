@@ -20,3 +20,4 @@ export const treasuryContractAddress =
   '0x927a100bcb00553138c6cfa22a4d3a8dbe1156d7'
 export const swapContractAddress = '0x10ED43C718714eb63d5aA57B78B54704E256024E'
 export const ncosContractAddress = '0x3587867fefd408a950834ad498097d0b20aab65a'
+export const bnbContractAddress = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'

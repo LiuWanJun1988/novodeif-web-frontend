@@ -77,6 +77,7 @@ import UserAvatar from '../ui/UserAvatar.vue'
 import BaseIcon from '../ui/BaseIcon.vue'
 import BaseButton from '../ui/BaseButton.vue'
 import { convertToNovo, convertToUSD } from '~/helpers/convertToCurrency'
+import { tokenContractAddress } from '~/constants/addresses'
 
 export default defineComponent({
   name: 'TheAccountMenu',
@@ -87,7 +88,8 @@ export default defineComponent({
   methods: {
     buyOnPCS() {
       window.open(
-        'https://pancakeswap.finance/swap?outputCurrency=0xCb10A6B203120C50Cce48e3E1131aA717A82fb5F',
+        'https://pancakeswap.finance/swap?outputCurrency=' +
+          tokenContractAddress,
         '_blank'
       )
     },

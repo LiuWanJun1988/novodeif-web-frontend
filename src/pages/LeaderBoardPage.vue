@@ -3,7 +3,10 @@
     <div :class="$style.page__container">
       <FollowNovo :class="$style.page__follow" />
       <TheLoadingScreen v-if="isLoading"></TheLoadingScreen>
-      <div v-if="!isLoading" :class="$style.page__stats">
+      <div
+        v-if="!isLoading && getters.isAuthorized.value"
+        :class="$style.page__stats"
+      >
         <div :class="$style.stats">
           <BaseIcon name="icon-cup" :class="$style.stats__icon" />
           <div :class="$style.stats__item" style="padding-left: 20px">
@@ -22,7 +25,10 @@
           </div>
         </div>
       </div>
-      <div v-if="!isLoading" :class="$style.page__transactions">
+      <div
+        v-if="!isLoading && getters.isAuthorized.value"
+        :class="$style.page__transactions"
+      >
         <BaseTable :columns="tableColumns" :data="stakesInfo" />
       </div>
     </div>
@@ -30,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
+import { computed, defineComponent } from 'vue'
 import FollowNovo from '~/components/ui/FollowNovo.vue'
 import BaseIcon from '~/components/ui/BaseIcon.vue'
 import BaseTable from '~/components/ui/BaseTable.vue'
@@ -38,7 +44,6 @@ import TheLoadingScreen from '~/components/common/TheLoadingScreen.vue'
 
 import { useStore } from '~/store'
 import { ethers } from 'ethers'
-import { text } from 'stream/consumers'
 
 export default defineComponent({
   name: 'LeaderBoardPage',
@@ -50,66 +55,85 @@ export default defineComponent({
     stakesInfo: [],
     isLoading: false,
   }),
+  watch: {
+    isAuthorized: function () {
+      this.getLeaderBoardInfo()
+    },
+  },
   async mounted() {
-    this.isLoading = true
-    let timeKeeper = await this.methods.getNcosContract().getTimeKeeper()
-    let timeStaked = Number(
-      ethers.utils.formatUnits(
-        timeKeeper.currentTimestamp - timeKeeper.stakeInfo.stakingTimestamp,
-        0
-      )
-    )
-    let oneMinute = 60,
-      oneHour = oneMinute * 60,
-      oneDay = oneHour * 24
-
-    this.timeKeeperAddress = [
-      timeKeeper.stakerAddress.slice(0, 5),
-      timeKeeper.stakerAddress.slice(-4),
-    ].join('...')
-
-    this.timeKeeperST = `${Math.floor(timeStaked / oneDay)} days : ${Math.floor(
-      (timeStaked % oneDay) / oneHour
-    )} hrs : ${Math.floor(
-      (timeStaked % oneHour) / oneMinute
-    )} mins : ${Math.floor(timeStaked % oneMinute)} secs`
-
-    this.timeKeeperNS = Number(
-      ethers.utils.formatUnits(timeKeeper.novoScore, 18)
-    )
-
-    let allStakers = await this.methods.getNcosContract().getAllStakers()
-    let numberOfStakers = allStakers.length
-    let currentTimestamp = Number(
-      ethers.utils.formatUnits(timeKeeper.currentTimestamp, 0)
-    )
-
-    for (let i = 0; i < numberOfStakers; i++) {
-      let stakeInfo = await this.methods
-        .getNcosContract()
-        .getStakingStatusByAddress(allStakers[i])
-      let row = {
-        wallet: stakeInfo.stakerAddress,
-        timeStaked:
-          currentTimestamp -
-          Number(
-            ethers.utils.formatUnits(stakeInfo.stakeInfo.stakingTimestamp, 0)
-          ),
-        novoScore: Number(ethers.utils.formatUnits(stakeInfo.novoScore, 18)),
+    this.getLeaderBoardInfo()
+  },
+  methods: {
+    async getLeaderBoardInfo() {
+      this.isLoading = true
+      if (this.getters.isAuthorized.value == false) {
+        this.isLoading = false
+        return
       }
-      this.stakesInfo.push(row)
-    }
-    this.stakesInfo.sort(function (a, b) {
-      return b.novoScore - a.novoScore
-    })
+      let timeKeeper = await this.methods.getNcosContract().getTimeKeeper()
+      let timeStaked = Number(
+        ethers.utils.formatUnits(
+          timeKeeper.currentTimestamp - timeKeeper.stakeInfo.stakingTimestamp,
+          0
+        )
+      )
+      let oneMinute = 60,
+        oneHour = oneMinute * 60,
+        oneDay = oneHour * 24
 
-    if (this.stakesInfo.length > 21) {
-      this.stakesInfo = this.stakesInfo.slice(0, 21)
-    }
-    this.isLoading = false
+      this.timeKeeperAddress = [
+        timeKeeper.stakerAddress.slice(0, 5),
+        timeKeeper.stakerAddress.slice(-4),
+      ].join('...')
+
+      this.timeKeeperST = `${Math.floor(
+        timeStaked / oneDay
+      )} days : ${Math.floor(
+        (timeStaked % oneDay) / oneHour
+      )} hrs : ${Math.floor(
+        (timeStaked % oneHour) / oneMinute
+      )} mins : ${Math.floor(timeStaked % oneMinute)} secs`
+
+      this.timeKeeperNS = Number(
+        ethers.utils.formatUnits(timeKeeper.novoScore, 18)
+      )
+
+      let allStakers = await this.methods.getNcosContract().getAllStakers()
+      let numberOfStakers = allStakers.length
+      let currentTimestamp = Number(
+        ethers.utils.formatUnits(timeKeeper.currentTimestamp, 0)
+      )
+
+      for (let i = 0; i < numberOfStakers; i++) {
+        let stakeInfo = await this.methods
+          .getNcosContract()
+          .getStakingStatusByAddress(allStakers[i])
+        let row = {
+          wallet: stakeInfo.stakerAddress,
+          timeStaked:
+            currentTimestamp -
+            Number(
+              ethers.utils.formatUnits(stakeInfo.stakeInfo.stakingTimestamp, 0)
+            ),
+          novoScore: Number(ethers.utils.formatUnits(stakeInfo.novoScore, 18)),
+        }
+        this.stakesInfo.push(row)
+      }
+      this.stakesInfo.sort(function (a, b) {
+        return b.novoScore - a.novoScore
+      })
+
+      if (this.stakesInfo.length > 21) {
+        this.stakesInfo = this.stakesInfo.slice(0, 21)
+      }
+      this.isLoading = false
+    },
   },
   setup() {
     const { getters, methods } = useStore()
+    const isAuthorized = computed(() => {
+      return getters.isAuthorized.value
+    })
 
     const tableColumns = [
       {
@@ -134,6 +158,7 @@ export default defineComponent({
       tableColumns,
       getters,
       methods,
+      isAuthorized,
     }
   },
 })

@@ -84,6 +84,7 @@ import TheWalletConnectionCard from './TheWalletConnectionCard.vue'
 import { isElement } from '~/helpers/isElement'
 import { useStore } from '~/store'
 import TheSidebarAccounts from './TheSidebarAccounts.vue'
+import { tokenContractAddress } from '~/constants/addresses'
 
 export default defineComponent({
   name: 'TheSidebar',
@@ -141,7 +142,9 @@ export default defineComponent({
         text: 'Buy Novo',
         icon: 'icon-buy-novo',
         isExternal: true,
-        link: 'https://pancakeswap.finance/swap?outputCurrency=0xCb10A6B203120C50Cce48e3E1131aA717A82fb5F',
+        link:
+          'https://pancakeswap.finance/swap?outputCurrency=' +
+          tokenContractAddress,
         target: '_blank',
       },
       {

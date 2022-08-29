@@ -53,8 +53,7 @@ export default defineComponent({
         buttonText: 'VIEW CHART',
         description:
           'The current market price of Novo on Decentralized Exchange',
-        detailLink:
-          'https://dexscreener.com/bsc/0xfc588a644edead922fe88055e03da5d9dd637eb0',
+        detailLink: 'https://dexscreener.com/bsc/' + tokenPairAddress,
       },
       {
         id: 2,
@@ -63,8 +62,7 @@ export default defineComponent({
         label: 'Market Cap',
         buttonText: 'VIEW BSCSCAN',
         description: 'total value of all NOVO tokens in  circulating supply',
-        detailLink:
-          'https://bscscan.com/token/0xCb10A6B203120C50Cce48e3E1131aA717A82fb5F',
+        detailLink: 'https://bscscan.com/token/' + tokenContractAddress,
       },
       {
         id: 3,
@@ -73,8 +71,7 @@ export default defineComponent({
         label: 'Treasury Balance',
         buttonText: 'VIEW TREASURY',
         description: 'The dollar value of assets held in the protocol Treasury',
-        detailLink:
-          'https://bscscan.com/address/0x927A100BCB00553138C6CFA22A4d3A8dbe1156D7',
+        detailLink: 'https://bscscan.com/address/' + treasuryContractAddress,
       },
       {
         id: 4,
@@ -111,8 +108,7 @@ export default defineComponent({
         label: 'Staking APY',
         buttonText: 'VIEW BSCSCAN',
         description: 'Current annual Percentage Yield on staking',
-        detailLink:
-          'https://bscscan.com/token/0xCb10A6B203120C50Cce48e3E1131aA717A82fb5F',
+        detailLink: 'https://bscscan.com/token/' + tokenContractAddress,
       },
       {
         id: 8,
@@ -121,8 +117,7 @@ export default defineComponent({
         label: 'Total Stakers',
         buttonText: 'VIEW BSCSCAN',
         description: 'The amount of wallets staked',
-        detailLink:
-          'https://bscscan.com/token/0xCb10A6B203120C50Cce48e3E1131aA717A82fb5F',
+        detailLink: 'https://bscscan.com/token/' + tokenContractAddress,
       },
     ],
   }),
