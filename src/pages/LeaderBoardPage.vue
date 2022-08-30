@@ -108,6 +108,7 @@ export default defineComponent({
         ethers.utils.formatUnits(timeKeeper.currentTimestamp, 0)
       )
 
+      this.stakesInfo = []
       for (let i = 0; i < numberOfStakers; i++) {
         let stakeInfo = await this.methods
           .getNcosContract()
