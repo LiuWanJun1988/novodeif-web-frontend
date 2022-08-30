@@ -57,7 +57,11 @@ export default defineComponent({
   }),
   watch: {
     isAuthorized: function () {
-      this.getLeaderBoardInfo()
+      if (this.isAuthorized) {
+        this.getLeaderBoardInfo()
+      } else {
+        this.stakesInfo = []
+      }
     },
   },
   async mounted() {
