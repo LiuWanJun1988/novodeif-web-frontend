@@ -77,7 +77,7 @@ import UserAvatar from '../ui/UserAvatar.vue'
 import BaseIcon from '../ui/BaseIcon.vue'
 import BaseButton from '../ui/BaseButton.vue'
 import { convertToNovo, convertToUSD } from '~/helpers/convertToCurrency'
-import { tokenContractAddress } from '~/constants/addresses'
+import { tokenContractAddress, tokenPairAddress } from '~/constants/addresses'
 
 export default defineComponent({
   name: 'TheAccountMenu',
@@ -103,24 +103,17 @@ export default defineComponent({
   },
   created() {
     fetch(
-      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=novo-token&order=market_cap_desc&per_page=100&page=1&sparkline=false'
-    )
-      .then(async (response) => {
-        const data = await response.json()
-        if (!response.ok) {
-          const error = (data && data.message) || response.statusText
-          return Promise.reject(error)
-        }
-        Promise.all(
-          data.map((item: { [x: string]: string }) => {
-            const currentPrice = parseFloat(item['current_price'])
-            this.currentPrice = currentPrice
-          })
-        )
-      })
-      .catch((error) => {
-        console.error('There was an error!', error)
-      })
+      'https://api.dexscreener.com/latest/dex/pairs/bsc/' + tokenPairAddress
+    ).then(async (response) => {
+      const data = await response.json()
+      if (!response.ok) {
+        const error = (data && data.message) || response.statusText
+        return Promise.reject(error)
+      }
+
+      const currentPrice = parseFloat(data.pair.priceUsd)
+      this.currentPrice = currentPrice
+    })
   },
   setup() {
     const { getters, methods } = useStore()

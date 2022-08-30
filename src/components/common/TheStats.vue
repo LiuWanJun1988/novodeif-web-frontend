@@ -37,10 +37,7 @@
 import { ethers } from 'ethers'
 import { computed, defineComponent, onMounted, ref, watch } from 'vue'
 import { convertToUSD } from '~/helpers/convertToCurrency'
-import {
-  tokenContractAddress,
-  tokenPairAddress,
-} from '../../constants/addresses'
+import { tokenPairAddress } from '../../constants/addresses'
 import { useStore } from '../../store'
 
 export default defineComponent({
@@ -50,8 +47,6 @@ export default defineComponent({
   }),
   created() {
     const { methods } = useStore()
-    const bscScanUrl = 'api.bscscan.com'
-    const owner = this.getters.selectedAccount.value
     const getStakeInfo = async () => {
       const currentStake = await methods
         .getNcosContract()

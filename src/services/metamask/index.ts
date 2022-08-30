@@ -1,15 +1,8 @@
 import MetaMaskOnboarding from '@metamask/onboarding'
 import { ethers, providers } from 'ethers'
 import { IProvider } from '../interfaces/IProvider'
-import { Web3Provider } from '@ethersproject/providers'
-import {
-  stakingContractAddress,
-  tokenContractAddress,
-} from '../../constants/addresses'
-import {
-  stakingContractABI,
-  tokenContractABI,
-} from '../../constants/contractABI'
+import { tokenContractAddress } from '../../constants/addresses'
+import { tokenContractABI } from '../../constants/contractABI'
 
 const url = new URL(window.location.href)
 const forwarderOrigin =

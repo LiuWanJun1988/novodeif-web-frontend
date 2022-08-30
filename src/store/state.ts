@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 import { Theme } from '~/types/common'
-import { MetaMask, MetaMaskProvider } from '../services/metamask'
+import { MetaMaskProvider } from '../services/metamask'
 import { StoreState } from './types'
 
 export default (): StoreState =>

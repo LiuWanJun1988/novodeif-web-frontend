@@ -1,16 +1,15 @@
 import { themeId } from '~/constants'
 import { MetaMaskProvider } from '~/services/metamask'
-import { StoreGetters, StoreMethods, StoreState } from './types'
+import { StoreMethods, StoreState } from './types'
 import { ethers } from 'ethers'
 import {
-  tokenContractAddress,
   stakingContractAddress,
   ncosContractAddress,
 } from '~/constants/addresses'
 import { stakingContractABI, ncosContractABI } from '~/constants/contractABI'
 import { WallConnectProvider } from '../services/walletconnect'
 
-export default (state: StoreState, getters: StoreGetters): StoreMethods => {
+export default (state: StoreState): StoreMethods => {
   const methods: StoreMethods = {
     setProvider(_providerName: string) {
       try {
