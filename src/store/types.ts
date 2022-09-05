@@ -53,3 +53,12 @@ export interface StoreMethods {
   setErrorMessage(error: string): void
   setAlertProperty(message: string, style: string): void
 }
+
+export type TransactionItem = {
+  type: string
+  icon: string
+  txhash: string
+  age: string
+  amount: string
+  bsctxhash: string
+}

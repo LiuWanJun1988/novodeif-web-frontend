@@ -66,7 +66,7 @@ import { ethers } from 'ethers'
 import { useStore } from '~/store'
 import {
   bnbContractAddress,
-  swapContractAddress,
+  pancakeRouterAddress,
   tokenContractAddress,
 } from '~/constants/addresses'
 
@@ -83,7 +83,7 @@ export default defineComponent({
       const infuraProvider = new ethers.providers.Web3Provider(provider as any)
       const signer = infuraProvider.getSigner()
       const contract = new ethers.Contract(
-        swapContractAddress,
+        pancakeRouterAddress,
         [
           'function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external payable returns (uint[] memory amounts)',
         ],

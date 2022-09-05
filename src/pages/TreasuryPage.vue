@@ -34,6 +34,7 @@ import BaseCard from '~/components/ui/BaseCard.vue'
 import { BigNumber, ethers } from 'ethers'
 import { convertBnbToUSD, convertToUSD } from '~/helpers/convertToCurrency'
 import {
+  burnAddress,
   ncosContractAddress,
   tokenContractAddress,
   tokenPairAddress,
@@ -123,23 +124,7 @@ export default defineComponent({
   }),
   methods: {
     getInformationByWeb3() {
-      const { state } = useStore()
-      const provider = state.provider.getWeb3ProviderInstance()
-      const signer = provider.getSigner()
-
-      const novotoken_contract = new ethers.Contract(
-        tokenContractAddress,
-        ['function balanceOf(address account) public view returns (uint256)'],
-        signer
-      )
-
-      const ncos_contract = new ethers.Contract(
-        ncosContractAddress,
-        ['function totalSupply() public view returns (uint256)'],
-        signer
-      )
-
-      novotoken_contract
+      this.novoTokenContract
         .balanceOf(ncosContractAddress)
         .then(async (tvl: BigNumber) => {
           this.tokenInformation[3].value = convertToUSD(
@@ -148,14 +133,14 @@ export default defineComponent({
           )
         })
 
-      novotoken_contract
+      this.novoTokenContract
         .balanceOf(treasuryContractAddress)
         .then(async (novoBalance: number) => {
           let novoBalanceWithUSD =
             (novoBalance / 1e9) *
             parseFloat(this.tokenInformation[0].value.replace('$', ''))
 
-          provider
+          this.provider
             .getBalance(treasuryContractAddress)
             .then((balanceWallet: BigNumber) => {
               convertBnbToUSD((balanceWallet as any) / 1e18).then((res) => {
@@ -167,7 +152,7 @@ export default defineComponent({
             .catch((error) => console.log(error))
         })
 
-      ncos_contract.totalSupply().then((totalSupply: any) => {
+      this.ncosContract.totalSupply().then((totalSupply: any) => {
         this.tokenInformation[7].value = totalSupply
       })
     },
@@ -187,9 +172,14 @@ export default defineComponent({
         }
 
         this.tokenInformation[0].value = '$' + data.pair.priceUsd
-        this.tokenInformation[1].value = convertToUSD(
-          984112880.53 * (data.pair.priceUsd as number)
-        )
+        this.novoTokenContract
+          .balanceOf(burnAddress)
+          .then(async (burned: number) => {
+            this.tokenInformation[1].value = convertToUSD(
+              (1000000000 - burned / 1e9) * (data.pair.priceUsd as number)
+            )
+          })
+
         this.tokenInformation[4].value = convertToUSD(
           parseInt(data.pair.volume.h24) * 0.03
         )
@@ -210,12 +200,27 @@ export default defineComponent({
   },
   setup() {
     const { getters } = useStore()
+    const { state } = useStore()
+    const provider = state.provider.getWeb3ProviderInstance()
+    const signer = provider.getSigner()
+
+    const novoTokenContract = new ethers.Contract(
+      tokenContractAddress,
+      ['function balanceOf(address account) public view returns (uint256)'],
+      signer
+    )
+
+    const ncosContract = new ethers.Contract(
+      ncosContractAddress,
+      ['function totalSupply() public view returns (uint256)'],
+      signer
+    )
 
     const isAuthorized = computed(() => {
       return getters.isAuthorized.value
     })
 
-    return { getters, isAuthorized }
+    return { getters, isAuthorized, novoTokenContract, ncosContract, provider }
   },
 })
 </script>

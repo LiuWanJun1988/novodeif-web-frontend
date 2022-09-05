@@ -20,7 +20,7 @@
             <div
               :class="[
                 $style.transactions__figure,
-                row.type == 'Swap'
+                row.type == 'Buy Novo' || row.type == 'Sell Novo'
                   ? $style.transactions__figure_swap
                   : row.type === 'UnStake'
                   ? $style.transactions__figure_unstaking
@@ -57,12 +57,11 @@ import { defineComponent } from 'vue'
 import BaseIcon from '../ui/BaseIcon.vue'
 import { useStore } from '../../store'
 import {
-  stakingContractAddress,
-  swapContractAddress,
+  pancakeRouterAddress,
   tokenContractAddress,
 } from '../../constants/addresses'
 import detectEthereumProvider from '@metamask/detect-provider'
-import { convertToNovo } from '~/helpers/convertToCurrency'
+import { TransactionItem } from '../../store/types'
 
 export default defineComponent({
   name: 'TheTransactions',
@@ -76,12 +75,10 @@ export default defineComponent({
           : 'https://testnet.bscscan.com/'
       const tokenContract = tokenContractAddress
       const owner = this.getters.selectedAccount.value
-      const stakingContractAddressOnNetwork =
-        stakingContractAddress.toLowerCase()
-      const swapContractAddressOnNetwork = swapContractAddress.toLowerCase()
+      const pancakeRouterAddressOnNetwork = pancakeRouterAddress.toLowerCase()
 
       fetch(
-        `https://${bscScanAPIUrl}/api?module=account&action=txlist&address=${owner}&page=1&offset=500&startblock=0&endblock=999999999&sort=desc&apikey=7BMPA4TJFJW6G9PBP21H9X2K6I7KBESXZR`
+        `https://${bscScanAPIUrl}/api?module=account&action=txlist&address=${owner}&page=1&offset=100&sort=desc&apikey=7BMPA4TJFJW6G9PBP21H9X2K6I7KBESXZR`
       ).then(async (response) => {
         const data = await response.json()
         if (!response.ok) {
@@ -95,80 +92,46 @@ export default defineComponent({
           type = 'Unknown'
           icon = ''
           if (
-            d.to.toLowerCase() == swapContractAddressOnNetwork.toLowerCase()
+            d.to.toLowerCase() == pancakeRouterAddressOnNetwork.toLowerCase()
           ) {
-            type = 'Swap'
-            icon = 'icon-swap'
+            if (d.functionName.includes('swapExactETHForTokens')) {
+              type = 'Buy Novo'
+              icon = 'icon-swap'
+            } else if (
+              d.functionName.includes('swapExactTokensForTokens') ||
+              d.functionName.includes('swapExactTokensForETH')
+            ) {
+              type = 'Sell Novo'
+              icon = 'icon-swap'
+            }
           } else if (
             d.to.toLowerCase() == tokenContract.toLowerCase() &&
             d.value == 0
           ) {
-            type = 'Approve'
+            type = d.functionName.includes('transfer') ? 'Transfer' : 'Approve'
             icon = 'icon-shield'
           }
 
           if (icon != '') {
-            this.transaction_items.push({
+            this.transactions.push({
               type: type,
               icon: icon,
               txhash: d.hash,
               age: d.timeStamp,
-              // to: 'To: ' + d.to,
-              // from: 'From: ' + d.from,
-              amount: (d.value / 10e16).toFixed(3) + 'BNB',
+              amount: (d.value / 1e18).toFixed(3) + 'BNB',
               bsctxhash: bscScanUrl + 'tx/' + d.hash,
-              // bscto: bscScanUrl + 'address/' + d.to,
-              // bscfrom: bscScanUrl + 'address/' + d.from,
             })
           }
-        })
-
-        fetch(
-          `https://${bscScanAPIUrl}/api?module=account&action=tokentx&contractaddress=${tokenContract}&address=${owner}&page=1&offset=500&startblock=0&endblock=999999999&sort=desc&apikey=7BMPA4TJFJW6G9PBP21H9X2K6I7KBESXZR`
-        ).then(async (response) => {
-          const data = await response.json()
-          if (!response.ok) {
-            const error = (data && data.message) || response.statusText
-            return Promise.reject(error)
-          }
-
-          let type = 'Unknown'
-          let icon = ''
-          data.result.map(async (d: any) => {
-            type = 'Unknown'
-            icon = ''
-            if (d.to == stakingContractAddressOnNetwork) {
-              type = 'Stake'
-              icon = 'icon-shield'
-            } else if (d.from == stakingContractAddressOnNetwork) {
-              type = 'UnStake'
-              icon = 'icon-shield'
-            }
-            if (icon != '') {
-              this.transaction_items.push({
-                type: type,
-                icon: icon,
-                txhash: d.hash,
-                age: d.timeStamp,
-                // to: 'To: ' + d.to,
-                // from: 'From: ' + d.from,
-                amount: convertToNovo(d.value / 10e8) + 'NOVO',
-                bsctxhash: bscScanUrl + 'tx/' + d.hash,
-                // bscto: bscScanUrl + 'address/' + d.to,
-                // bscfrom: bscScanUrl + 'address/' + d.from,
-              })
-            }
-          })
         })
       })
     })
   },
   data: () => ({
-    transaction_items: [],
+    transactions: Array<TransactionItem>(),
   }),
   computed: {
     rows() {
-      return this.transaction_items
+      return this.transactions
     },
   },
   methods: {
@@ -181,17 +144,19 @@ export default defineComponent({
       return str.slice(0, num) + '...' + str.slice(str.length - num, str.length)
     },
     time_ago(time: string | number | Date) {
+      var inputTime = 0
       switch (typeof time) {
         case 'number':
+          inputTime = time
           break
         case 'string':
-          time = +new Date(time)
+          inputTime = +new Date(time)
           break
         case 'object':
-          if (time.constructor === Date) time = time.getTime()
+          if (time.constructor === Date) inputTime = time.getTime()
           break
         default:
-          time = +new Date()
+          inputTime = +new Date()
       }
       var time_formats = [
         [60, 'seconds', 1], // 60
@@ -210,7 +175,7 @@ export default defineComponent({
         [5806080000, 'Last century', 'Next century'], // 60*60*24*7*4*12*100*2
         [58060800000, 'centuries', 2903040000], // 60*60*24*7*4*12*100*20, 60*60*24*7*4*12*100
       ]
-      var seconds = (+new Date() - time) / 1000,
+      var seconds = (+new Date() - inputTime) / 1000,
         token = 'ago',
         list_choice = 1
 
