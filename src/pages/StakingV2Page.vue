@@ -130,7 +130,7 @@ export default defineComponent({
         this.methods.setAlertProperty('Stake Successful!', 'success')
         emitter.emit('alert:open')
       } catch (error) {
-        this.methods.setAlertProperty('Stake Failed', 'danger')
+        this.methods.setAlertProperty(error.data.message, 'danger')
         emitter.emit('alert:open')
       }
     },

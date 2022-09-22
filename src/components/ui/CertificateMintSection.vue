@@ -25,7 +25,9 @@
     </div>
     <div :class="$style.section__input">
       <div :class="$style.section__amountlabel">
-        <label :class="$style.section__inputlabel" for="amount">Amount *</label>
+        <label :class="$style.section__inputlabel" for="amount"
+          >Amount * (Min: 10,000NOVO)</label
+        >
         <span :class="$style.section__inputlabel"
           >Bal: {{ getters.selectedBalance.value.toFixed(2) }} NOVO</span
         >
@@ -34,7 +36,7 @@
         ref="inputRef"
         type="text"
         id="amount"
-        placeholder="Type in a amount to stake ..."
+        placeholder="Type in a large amount than 10,000novo to stake ..."
         v-model="stakingAmount"
         :class="$style.section__textinput"
       />
