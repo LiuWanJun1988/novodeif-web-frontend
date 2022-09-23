@@ -130,7 +130,25 @@ export default defineComponent({
         this.methods.setAlertProperty('Stake Successful!', 'success')
         emitter.emit('alert:open')
       } catch (error) {
-        this.methods.setAlertProperty(error.data.message, 'danger')
+        if (
+          error.data.message.includes(
+            'Staking amount should be large than min amount'
+          )
+        ) {
+          this.methods.setAlertProperty(
+            'Transaction Failed: Principal amount staked must be greater than 10,000 Novo.',
+            'danger'
+          )
+        } else {
+          this.methods.setAlertProperty(
+            error.data.message.replace(
+              'execution reverted',
+              'Transaction Failed'
+            ),
+            'danger'
+          )
+        }
+
         emitter.emit('alert:open')
       }
     },
